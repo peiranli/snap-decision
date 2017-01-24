@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.dots"
+    android:versionCode="3"
+    android:versionName="3.0">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--<uses-permission android:name="android.permission.READ_PROFILE" /> -->
+    <!--<uses-permission android:name="android.permission.READ_CONTACTS" />-->
+
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="16" />
+
+    <application
+        android:name="com.example.dots.ParseApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/visrt_app_icon"
+        android:label="@string/app_name">
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.MainActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name"
+
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+        </activity>
+        <activity
+            android:name="com.example.dots.LoginSignupActivity"
+
+            android:theme="@android:style/Theme.NoTitleBar">
+
+        </activity>
+        <activity
+            android:name="com.example.dots.GameActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+            >
+
+        </activity>
+        <activity
+            android:name = "com.example.dots.LimitsGameActivity"
+            android:theme="@android:style/Theme.NoTitleBar">
+
+        </activity>
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.NewUserMessageActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:name="com.example.dots.TimedGameActivity"
+            android:theme="@android:style/Theme.NoTitleBar"></activity>
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.GameMenuActivity"></activity>
+        <activity
+            android:name="LimitsGraphActivity"
+            android:theme = "@android:style/Theme.NoTitleBar"></activity>
+        <activity
+            android:name="com.example.dots.GraphMenuActivity"
+            android:theme = "@android:style/Theme.NoTitleBar"></activity>
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.AboutActivity"></activity>
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.ViewTermsActivity"></activity>
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.ViewDataActivity"></activity>
+
+        <service android:name="com.example.dots.SaveDataService"></service>
+
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.WelcomeActivity"
+            android:label="@string/app_name">
+
+
+        </activity>
+
+
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.GraphActivity"
+            android:label="@string/app_name"></activity>
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.SplashActivity"></activity>
+
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.example.dots.TimedGraphActivity"
+            android:label="@string/app_name"></activity>
+    </application>
+
+</manifest>

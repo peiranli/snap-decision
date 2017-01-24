@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Snap Decision Test</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="hello">Hello World, ParseStarterProjectActivity!</string>
+    <string name="Username">Username</string>
+    <string name="Password">Password</string>
+    <string name="LoginBtn">Login</string>
+    <string name="SignupBtn">Sign Up</string>
+    <string name="LogoutBtn">Log Out</string>
+    <string name="ExitBtn">Exit</string>
+    <string name="Welcome">Welcome!</string>
+    <string name="title_activity_new_user_message">NewUserMessageActivity</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="study_terms">PURPOSE AND BACKGROUND\n\n
+                Dr. Pamela Reinagel at the University of California, San Diego is conducting a research
+study to learn about how people make snap decisions based on ambiguous sensory cues.
+You have been invited to participate because you are a healthy volunteer, 18 years old or
+older, with normal or corrected vision and hearing. There will be approximately 100
+volunteers in this study.\n\n
+PROCEDURES\n\n
+If you agree to be in this study, data from any tests you complete within this app,
+including any you have already completed, will be anonymously uploaded to our data
+server for research analysis. The uploaded data will be limited to: the time of each
+attempt, ambient light level, stimulus shown, response made, and reaction time.
+You do not have to do anything extra to participate in the study. You can continue to
+perform self-tests at any time, for any duration, just as if you were not participating. Your
+data will be automatically uploaded to our server when your device has wireless
+connection to the internet. Your participation lasts until you choose to withdraw or the
+study ends. There will be no cost to you for participating in this study. There is no compensation for
+participating in this study.\n\n
+RISKS AND INCONVENIENCES\n\n
+Participation in this study may involve some added risks or discomforts. These include
+the following:\n\n
+1.\vThere is a potential for the loss of confidentiality. To minimize this risk, neither
+your name nor any other identifying information will be recorded at any time. Your
+data will be identified only by a unique random code generated on your device, that
+cannot be traced back to you. Research records will be kept confidential to the extent
+allowed by law. Research records may be reviewed by the UCSD Institutional Review Board.\n\n
+2.\vBecause this is a research study, there may also be some unknown risks that are
+currently unforeseeable. You will be told if there are any significant new findings
+affecting your risk.\n\n
+BENEFITS\n\n
+There is no direct benefit to you of participating.  Society may benefit from advancing
+our understanding of human cognition. In the future this basic knowledge could lead to
+the development of useful cognitive or clinical tests or training methods.\n\n
+QUESTIONS\n\n
+The study has been explained to you, and you have had an opportunity to ask questions
+by contacting the investigator at preinagel@ucsd.edu.  If you have other questions or
+research-related problems, you may reach Dr. Pamela Reinagel at preinagel@ucsd.edu.
+You may call the Human Research Protections Program Office at (858) 657-5100 to
+inquire about your rights as a research subject or to report research-related problems.
+Participation is entirely voluntary. You are under no obligation to take part in this study.
+You may refuse to participate or withdraw at any time without jeopardy.\n\n
+CONSENT\n\n
+You will be able to view this document again at any time within the app. Clicking “Yes I
+consent to participate” will server as your signature, indicating that you have read this
+information and you agree to participate:</string>
+
+</resources>

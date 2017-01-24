@@ -1,0 +1,2 @@
+include ':NumberProgressBar'
+project(':NumberProgressBar').projectDir = new File('libraries/NumberProgressBar')

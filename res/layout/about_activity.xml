@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.example.dots.AboutActivity"
+    android:background="#f3987e">
+
+    <TextView
+        android:id="@+id/AboutMessage"
+        android:text="@string/hello_world"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#020101"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/TermsConditions"
+        android:text=""
+        android:textSize="20sp"
+        android:layout_below="@id/AboutMessage"
+        android:layout_width="wrap_content"
+        android:visibility="invisible"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/backButton"
+        android:text="Back"
+        android:layout_width="750dp"
+        android:layout_height="50dp"
+        android:onClick="onBackClick"
+        android:background="#3dffffff"
+        style="@style/Base.TextAppearance.AppCompat.Headline"
+        android:layout_marginBottom="72dp"
+        android:textColor="#000000"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:textSize="20dp" />
+
+</RelativeLayout>

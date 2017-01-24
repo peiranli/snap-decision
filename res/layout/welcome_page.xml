@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.example.dots.ViewTermsActivity"
+    android:background="#f3987e">
+
+    <ImageView
+        android:id="@+id/graphic"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/doticonlarge"
+        android:adjustViewBounds="true"/>
+    <Button
+        android:id="@+id/aboutButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="About"
+        android:onClick = "onAboutClick"
+        android:background="#3dffffff"
+        android:textColor="#000000"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/viewTermsButton"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="5dp"
+        android:height="50dp"
+        android:width="50dp"
+        android:textSize="20dp"/>
+
+    <Button
+        android:id="@+id/playButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="Run A Test"
+        android:onClick = "onPlayClick"
+        android:background="#3dffffff"
+        android:textColor="#000000"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="20dp"
+        android:height="50dp"
+        android:width="50dp"/>
+
+    <Button
+        android:id="@+id/showDataButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/playButton"
+        android:text="See Results"
+        android:onClick = "onShowDataClick"
+        android:background="#3dffffff"
+        android:textColor="#000000"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="20dp"
+        android:height="50dp"
+        android:width="50dp"/>
+    <Button
+        android:id="@+id/viewTermsButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/showDataButton"
+        android:text="Read the research study terms"
+        android:onClick = "onViewTermsClick"
+        android:background="#3dffffff"
+        android:textColor="#000000"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:height = "50dp"
+        android:width = "50dp"
+        android:textSize="20dp"/>
+
+    <Button
+        android:id="@+id/logOutButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/aboutButton"
+        android:text="Log Out"
+        android:onClick = "logOut"
+        android:background="#3dffffff"
+        android:textColor="#000000"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="20dp"
+        android:height="50dp"
+        android:width="50dp"/>
+
+
+
+
+    <ScrollView android:id="@+id/ScrollView01"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:id="@+id/instructions_view" >
+
+            <TextView android:id="@+id/TextView01"
+                android:background="#ffffff"
+                android:textColor="#000000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text= "@string/study_terms"
+                ></TextView>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            <Button
+                android:id = "@+id/acceptTerms"
+                android:onClick="onAccept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize = "12dp"
+                android:height="50dp"
+                android:width="150dp"
+                android:text = "Yes, I consent to participate"
+                >
+
+
+            </Button>
+            <Button
+                android:id = "@+id/declineTerms"
+                android:onClick="onDecline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:height="50dp"
+                android:width="150dp"
+                android:textSize = "12dp"
+
+
+                android:text = "Please exclude me from the study"
+
+                >
+
+
+
+            </Button>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <ScrollView
+        android:id = "@+id/ScrollView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity = "center"
+        android:background="#ffffff"
+        android:textColor="#000000"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:textColor="#000000"
+            android:text="Please enter your date of birth"
+            android:layout_gravity="center">
+            </TextView>
+            <DatePicker
+            android:id = "@+id/datePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity = "center"
+            android:onClick = "onDateChanged">
+
+            </DatePicker>
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:textColor="#000000"
+                android:layout_gravity = "center"
+                android:text = "Is your vision normal or corrected to be normal?"
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <RadioGroup
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:textColor="#000000"
+                    android:layout_gravity = "center"
+                    android:text = "Yes"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:id = "@+id/yesRadio"
+                    android:onClick="onRadioButtonClicked"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:textColor="#000000"
+                    android:layout_gravity = "center"
+                    android:text = "No"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity = "right"
+                    android:id = "@+id/noRadio"
+                    android:onClick="onRadioButtonClicked"
+                    />
+                </RadioGroup>
+
+
+            </LinearLayout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text = "Submit"
+                android:layout_gravity="center"
+                android:id = "@+id/SurveyTurnIn"
+                android:onClick = "onSurveyComplete"/>
+        </LinearLayout>
+        </ScrollView>
+
+
+
+</RelativeLayout>

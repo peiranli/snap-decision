@@ -1,0 +1,107 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="#000000">
+
+     <com.example.dots.AnimatedView
+        android:id="@+id/anim_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop = "true"
+    android:layout_marginBottom="60dp"
+    android:layout_marginTop = "30dp"
+
+        android:text="@string/hello_world" />
+
+    <com.example.dots.RandDotsView
+        android:id="@+id/rand_dots"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+         android:layout_alignParentTop = "true"
+     android:layout_marginBottom="60dp"
+     android:layout_marginTop="30dp"
+        android:background="#0000"
+        android:text="@string/hello_world" />
+
+
+
+     <TextView
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal = "false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop = "true"
+        android:layout_height = "30dp"
+        android:gravity="center"
+        android:textSize= "18sp"
+        android:textColor="#00ff00"
+        android:text="Points:   0/200 Level:     " />
+
+<!--
+    <Button android:id="@+id/logOut"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:layout_alignParentRight="true"
+        android:text="Log out"
+        android:onClick = "logOut"
+        android:textSize = "12sp"/>
+        -->
+
+    <com.daimajia.numberprogressbar.NumberProgressBar
+        android:id="@+id/progressBar"
+        android:layout_toRightOf = "@id/info"
+        android:layout_marginTop = "8dp"
+        android:layout_marginLeft="3dp"
+        android:visibility="invisible"
+        custom:progress_text_size="18sp"
+        style="@style/NumberProgressBar_Relax_Blue"
+        custom:progress="0"
+        android:layout_height="wrap_content" />
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom ="true" >
+
+        <Button android:id="@+id/left"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+
+            android:onClick="clickLeft" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" >
+        </View>
+
+        <Button android:id="@+id/center"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+
+            android:onClick="clickCenter"
+            />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" >
+        </View>
+
+        <Button android:id="@+id/right"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+
+            android:onClick = "clickRight" />
+    </LinearLayout>
+
+
+</RelativeLayout>
