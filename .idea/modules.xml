@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/libraries/NumberProgressBar/NumberProgressBar.iml" filepath="$PROJECT_DIR$/libraries/NumberProgressBar/NumberProgressBar.iml" />
-      <module fileurl="file://$PROJECT_DIR$/snap.iml" filepath="$PROJECT_DIR$/snap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/snap-decision.iml" filepath="$PROJECT_DIR$/snap-decision.iml" />
     </modules>
   </component>
 </project>

@@ -255,16 +255,13 @@ public class GameActivity extends Activity implements SensorEventListener
     }
 
     private void writeToFile() {
-
-        String fileName = "data.txt";
-        // 1 and 0 after brightness are placeholders for now, as well as 60 for framerate
-        // and 35, which is dot size
-        String data = date+"\t"+light+"\t"+currLevel+"\t"+currLevel.getTrialNumber()+"\t"+60+"\t"+currLevel.getBrightness()+
+        String data = date+"\t"+light+"\t"+currLevel+"\t"+currLevel.getTrialNumber()+"\t"+60+"\t"
+                +currLevel.getBrightness()+
                 "\t"+1+"\t"+0+"\t"+currLevel.getNumDots()+"\t"+35+"\t"+currLevel.getSpeed()+"\t"+
                 currLevel.getPenaltyTime()+"\t"+currLevel.getCoherence()+"\t"+direction+"\t"+
                 response+"\t"+responseTime+"\n";
         //File file = new File(Environment.getExternalStorageDirectory()+"/"+fileName);
-        File file = new File(getExternalFilesDir(null),/*LoginSignupActivity.usernameFileData.get(0) +*/ "data.txt");
+        File file = new File(getExternalFilesDir(null),LoginSignupActivity.usernameFileData.get(0) + "data.txt");
         boolean fileExists = file.exists();
         if(fileExists)
             System.out.println("The file exists");
@@ -274,35 +271,48 @@ public class GameActivity extends Activity implements SensorEventListener
             Log.i("GameActivity", "file is in: " + file.getAbsolutePath());
             outputStreamWriter.write(data);
             outputStreamWriter.close();
-            Intent saveData = new Intent(this, SaveDataService.class);
-            //saveData.putExtra("data", data);
-            saveData.putExtra("game_type","practice");
-            saveData.putExtra("points", points);
-            saveData.putExtra("artificial_level", artificial_level);
-            saveData.putExtra("level", currLevel.getLevel());
-            saveData.putExtra("date",date);
-            saveData.putExtra("light",light);
-            saveData.putExtra("currLevel",currLevel.toString());
-            saveData.putExtra("trial_number",currLevel.getTrialNumber());
-            saveData.putExtra("framerate",60);
-            saveData.putExtra("brightness",currLevel.getBrightness());
-            saveData.putExtra("placeholder",1);
-            saveData.putExtra("placeholder2",0);
-            saveData.putExtra("numDots",currLevel.getNumDots());
-            saveData.putExtra("dot_size",35);
-            saveData.putExtra("speed",currLevel.getSpeed());
-            saveData.putExtra("penalty_time",currLevel.getPenaltyTime());
-            saveData.putExtra("coherence",currLevel.getCoherence());
-            saveData.putExtra("direction",direction);
-            saveData.putExtra("response",response);
-            saveData.putExtra("response_time",responseTime);
-            startService(saveData);
         }
         catch(FileNotFoundException ex) {
             System.err. println("Data.txt doesn't exist");
         }
         catch (IOException e) {Log.e("s", "File write failed: " + e.toString());
         }
+
+
+
+
+    }
+
+    private void saveGameData(){
+        Intent saveData = null;
+        String enrollment = LoginSignupActivity.usernameFileData.get(LoginSignupActivity.ENROLL_INDEX);
+        int en = Integer.parseInt(enrollment);
+        if(online()&& en == 1)
+            saveData = new Intent(this, SaveDataService.class);
+        else
+            saveData = new Intent(this, OfflineSaveDataService.class);
+        //saveData.putExtra("data", data);
+        saveData.putExtra("game_type","practice");
+        saveData.putExtra("points", points);
+        saveData.putExtra("artificial_level", artificial_level);
+        saveData.putExtra("level", currLevel.getLevel());
+        saveData.putExtra("date",date);
+        saveData.putExtra("light",light);
+        saveData.putExtra("currLevel",currLevel.toString());
+        saveData.putExtra("trial_number",currLevel.getTrialNumber());
+        saveData.putExtra("framerate",60);
+        saveData.putExtra("brightness",currLevel.getBrightness());
+        saveData.putExtra("placeholder",1);
+        saveData.putExtra("placeholder2",0);
+        saveData.putExtra("numDots",currLevel.getNumDots());
+        saveData.putExtra("dot_size",35);
+        saveData.putExtra("speed",currLevel.getSpeed());
+        saveData.putExtra("penalty_time",currLevel.getPenaltyTime());
+        saveData.putExtra("coherence",currLevel.getCoherence());
+        saveData.putExtra("direction",direction);
+        saveData.putExtra("response",response);
+        saveData.putExtra("response_time",responseTime);
+        startService(saveData);
     }
 
     public void clickLeft(View v)
@@ -402,7 +412,8 @@ public class GameActivity extends Activity implements SensorEventListener
         // Commit the edits!
         editor.commit();
             // write data
-            writeToFile();
+        writeToFile();
+        saveGameData();
             //check for graduation
             if(currLevel.graduateLevel())
             {
@@ -494,7 +505,7 @@ public class GameActivity extends Activity implements SensorEventListener
 
     public void logOut(View v)
     {
-        ParseUser.logOut();
+
         //finish();
         //File file = new File(Environment.getExternalStorageDirectory()+"/"+"data.txt");
         File file = new File(getExternalFilesDir(null),/*LoginSignupActivity.usernameFileData.get(0) +*/ "data.txt");
@@ -681,6 +692,22 @@ public class GameActivity extends Activity implements SensorEventListener
         Intent returnIntent = new Intent();
         setResult(RESULT_CANCELED, returnIntent);
         finish();
+    }
+
+    public boolean online(){
+        Context context = getApplicationContext();
+
+        final ConnectivityManager connectivityManager =
+                ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+            System.out.println("network is connected");
+            return true;
+        } else {
+            //if(sharedPrefs.contains)
+            System.out.println("network is not connected");
+            return false;
+        }
     }
 }
 

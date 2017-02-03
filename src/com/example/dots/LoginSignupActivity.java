@@ -66,13 +66,7 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
     SharedPreferences sharedPrefs;
     boolean offline = false;
     boolean clicked = false;
-    // [START declare_auth]
-    private FirebaseAuth mAuth;
-    // [END declare_auth]
 
-    // [START declare_auth_listener]
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    // [END declare_auth_listener]
     private String TAG = "LoginSignup";
     /**
      * Called when the activity is first created.
@@ -97,90 +91,16 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
         loginbutton = (Button) findViewById(R.id.login);
         signup = (Button) findViewById(R.id.signup);
         //runOffline = (Button) findViewById(R.id.runOffline);
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                // ...
-            }
-        };
 
     }
 
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
-    public void signIn(String username, String password){
-        Log.d(TAG, "signIn:" + username);
-        if (!validateForm()) {
-            return;
-        }
-        mAuth.signInWithEmailAndPassword(username, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail", task.getException());
-                            Toast.makeText(LoginSignupActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
-    }
 
 
-    public void signUp(String username, String password) {
-        Log.d(TAG, "signUp:" + username);
-        if (!validateForm()) {
-            return;
-        }
-        mAuth.createUserWithEmailAndPassword(username, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(LoginSignupActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
-    }
     public static java.util.Date getDateFromDatePicker(DatePicker datePicker){
         if(datePicker!=null) {
             int day = datePicker.getDayOfMonth();
@@ -197,32 +117,7 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
     }
 
 
-    public boolean checkDate(){ //phased out temporarily *MOVED TO WELCOME ACTIVITY*
-        /*LayoutInflater layoutInflater = LayoutInflater.from(this);
-        //View promptView = layoutInflater.inflate(R.layout.age_prompt, null);
-        //final DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        //alertDialogBuilder.setView(promptView);
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // get user input and set it to result
-                        //date = getDateFromDatePicker(datePicker);
-                    }
-                })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
 
-        AlertDialog alertD = alertDialogBuilder.create();
-        alertD.show();*/
-
-        return true;
-    }
 
 
 
@@ -357,7 +252,6 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
                     // Commit the edits!
                     editor.commit();
                     //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
                     //Login();
                 Intent intent;
                 intent = new Intent(
@@ -434,19 +328,5 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
         }
     }
 
-    public boolean online(){
-        Context context = getApplicationContext();
 
-        final ConnectivityManager connectivityManager =
-                ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
-            System.out.println("network is connected");
-            return true;
-        } else {
-            //if(sharedPrefs.contains)
-            System.out.println("network is not connected");
-            return false;
-        }
-    }
 }

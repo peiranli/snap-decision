@@ -66,7 +66,8 @@ public class SaveDataService extends IntentService {
         String usernameFile = prefs.getString("usernametxt", "default") + ".txt";
         String username = prefs.getString("usernametxt", "default");
         Encryptor encryptor = new Encryptor();
-        String usernameE = encryptor.encrypt(username,android.os.Build.MODEL);
+        String usernameE = encryptor.encrypt(username,android.os.Build.ID);
+
         //Changed to allow for easy install/uninstall
         //File file = new File(Environment.getExternalStorageDirectory() + "/" + usernameFile);
         File file = new File(getExternalFilesDir(null), usernameFile);        //read in previous information(mostly for username/password)

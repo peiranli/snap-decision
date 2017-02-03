@@ -31,6 +31,8 @@ import com.google.common.io.Files;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.parse.LogInCallback;
 import com.parse.ParseUser;
 import com.parse.*;
@@ -46,6 +48,8 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import static com.example.dots.R.raw.error;
+
 /**
  * Class defining the functionality of the main menu screen of the application. Contains buttons
  * to move to most other screens of the app.
@@ -58,7 +62,6 @@ public class WelcomeActivity extends Activity {
     private PopupWindow popupWindow;
     private ScrollView popper;
     private ScrollView popper2;
-    public static ParseException uniqueCheck; //determine whether to keep searching for a new username
     public static boolean logInFailed = false; //if logged in while checking duplicate names, stop signing up
     public static int uniqueInt; //force user to have different parse username
     public static final String PREFS_NAME = "Dots_Pref";
@@ -72,8 +75,9 @@ public class WelcomeActivity extends Activity {
 
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private String androidId = android.os.Build.MODEL;
+    private String androidId = android.os.Build.ID;
     Encryptor encryptor;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +88,11 @@ public class WelcomeActivity extends Activity {
         //artificial_level = startIntent.getIntExtra("artificial_level", -1);
         //level = startIntent.getIntExtra("level", -1);
         SharedPreferences settings = getSharedPreferences(LoginSignupActivity.PREFS_NAME, 0);
+        String username = settings.getString("usernametxt","default");
+        String password = settings.getString("passwordtxt","default");
         connectivityManager = ((ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE));
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         points = settings.getInt("points", -1);
         artificial_level = settings.getInt("artificial_level", -1);
         level = settings.getInt("level", -1);
@@ -108,6 +115,7 @@ public class WelcomeActivity extends Activity {
             @Override
             public void onAuthStateChanged(FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+                //user.getToken(true);
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
@@ -118,6 +126,11 @@ public class WelcomeActivity extends Activity {
                 // ...
             }
         };
+        String usernameEncrypted = encryptor.encrypt(username,androidId);
+        String fakeEmail = usernameEncrypted + "@gitdots.com";
+        signIn(fakeEmail,password);
+
+
 
 
     }
@@ -230,10 +243,10 @@ public class WelcomeActivity extends Activity {
         //ParseUser.logOut();
         //finish();
         //File file = new File(Environment.getExternalStorageDirectory() + "/" + "data.txt");
-        File file = new File(getExternalFilesDir(null),"data.txt");
+        /*File file = new File(getExternalFilesDir(null),"data.txt");
         boolean fileExists = file.exists();
         if(fileExists)
-            file.delete();
+            file.delete();*/
         Intent intent = new Intent(this, LoginSignupActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
@@ -539,7 +552,7 @@ public class WelcomeActivity extends Activity {
         final String passwordtxt = prefs.getString("passwordtxt", "default");
         int enrollment = prefs.getInt("enrollment",0);
         String usernameEncrypted = encryptor.encrypt(usernametxt,androidId);
-        String fakeEmail = usernameEncrypted + "@gitdots.firebaseapp.com";
+        String fakeEmail = usernameEncrypted + "@gitdots.com";
         NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
@@ -567,6 +580,9 @@ public class WelcomeActivity extends Activity {
         ArrayList<String> usernameFileData = new ArrayList<String>();
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String usernameFile = prefs.getString("usernametxt", "default") + ".txt";
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("enrollment",1);
+        editor.commit();
         //Changed to allow for easy install/uninstall
         //File file = new File(Environment.getExternalStorageDirectory() + "/" + usernameFile);
         File file = new File(getExternalFilesDir(null), usernameFile);        //read in previous information(mostly for username/password)
@@ -623,6 +639,7 @@ public class WelcomeActivity extends Activity {
      * Physical back button pressed.
      * Will either remove popup boxes, or run log out.
      */
+    @Override
     public void onBackPressed() {
 
         if (popper.isShown()) {
@@ -633,7 +650,11 @@ public class WelcomeActivity extends Activity {
         }
         else
         {
-            logOut(null);
+            mAuth.signOut();
+            Intent intent = new Intent(this, LoginSignupActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
+            finish();
         }
         return;
     }
@@ -697,6 +718,88 @@ public class WelcomeActivity extends Activity {
                         // ...
                     }
                 });
+    }
+
+    private void uploadLocalData(){
+        String filename = LoginSignupActivity.usernameFileData.get(0) + "data.txt";
+        File file = new File(getExternalFilesDir(null),filename);
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String username = prefs.getString("usernametxt", "default");
+        Encryptor encryptor = new Encryptor();
+        String usernameE = encryptor.encrypt(username,android.os.Build.ID);
+        if(file.exists()) {
+            System.err.println("userFile exists");
+        }
+        Scanner userDataStream = null;
+        try {
+            userDataStream = new Scanner(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String information = null;
+        String[] parsedData = null;
+        while(userDataStream.hasNextLine()) {
+            information = userDataStream.nextLine();
+            parsedData = parseLocalData(information); //decide to move to upLoadService
+        }
+    }
+
+    private String[] parseLocalData(String data){
+        String[] result = data.split("\\t");
+        Intent dataIntent = new Intent();
+        String date = result[0];
+        float light = Float.parseFloat(result[1]);
+        String currLevel = result[2];
+        int trialNumber = Integer.parseInt(result[3]);
+        double framerate = Double.parseDouble(result[4]);
+        double brightness = Double.parseDouble(result[5]);
+        int placeholder = Integer.parseInt(result[6]);
+        int placeholder2 = Integer.parseInt(result[7]);
+        int numDots = Integer.parseInt(result[8]);
+        int dotSize = Integer.parseInt(result[9]);
+        int speed = Integer.parseInt(result[10]);
+        double penaltyTime = Double.parseDouble(result[11]);
+        double coherence = Double.parseDouble(result[12]);
+        int direction = Integer.parseInt(result[13]);
+        int response = Integer.parseInt(result[14]);
+        long responseTime = Long.parseLong(result[15]);
+        String gameType = result[16];
+        dataIntent.putExtra("game_type",gameType);
+        dataIntent.putExtra("points", points);
+        dataIntent.putExtra("artificial_level", artificial_level);
+        dataIntent.putExtra("level", currLevel);
+        dataIntent.putExtra("date",date);
+        dataIntent.putExtra("light",light);
+        dataIntent.putExtra("currLevel",currLevel.toString());
+        dataIntent.putExtra("trial_number",trialNumber);
+        dataIntent.putExtra("framerate",60);
+        dataIntent.putExtra("brightness",brightness);
+        dataIntent.putExtra("placeholder",1);
+        dataIntent.putExtra("placeholder2",0);
+        dataIntent.putExtra("dot_size",35);
+        dataIntent.putExtra("speed",speed);
+        dataIntent.putExtra("penalty_time",penaltyTime);
+        dataIntent.putExtra("coherence",coherence);
+        dataIntent.putExtra("direction",direction);
+        dataIntent.putExtra("response",response);
+        dataIntent.putExtra("response_time",responseTime);
+        return result;
+    }
+
+    public boolean online(){
+        Context context = getApplicationContext();
+
+        final ConnectivityManager connectivityManager =
+                ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+            System.out.println("network is connected");
+            return true;
+        } else {
+            //if(sharedPrefs.contains)
+            System.out.println("network is not connected");
+            return false;
+        }
     }
 }
 
