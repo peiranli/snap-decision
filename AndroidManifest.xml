@@ -78,7 +78,7 @@
             android:name="com.example.dots.ViewDataActivity"></activity>
 
         <service android:name="com.example.dots.SaveDataService"></service>
-
+        <service android:name="com.example.dots.UploadDataService"></service>
         <activity
             android:theme="@android:style/Theme.NoTitleBar"
             android:name="com.example.dots.WelcomeActivity"

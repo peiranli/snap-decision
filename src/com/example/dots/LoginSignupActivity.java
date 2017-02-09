@@ -122,6 +122,8 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
 
 
     private void usernameSignupFileParse() {
+        if(!validateForm())
+            return;
         usernametxt = username.getText().toString();
         passwordtxt = password.getText().toString();
         String usernameFile = usernametxt + ".txt";
@@ -158,6 +160,7 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
                 outputStreamWriter.write("true");//for study availability
                 outputStreamWriter.write("\n");
                 outputStreamWriter.write("0");//for enroll information
+                outputStreamWriter.write("\n");
                 outputStreamWriter.close();
 
             }
@@ -193,6 +196,8 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
         }
     }
     private void usernameLoginFileParse() {
+        if(!validateForm())
+            return;
         usernametxt = username.getText().toString();
         passwordtxt = password.getText().toString();
         String usernameFile = usernametxt + ".txt";
@@ -312,18 +317,10 @@ public class LoginSignupActivity extends Activity implements View.OnClickListene
         int id = view.getId();
         if(id == R.id.login){
             usernameLoginFileParse();
-            /*if(online()) {
-                signIn(fakeEmail,
-                        encryptor.encrypt(password.getText().toString(), androidId));
-            }*/
+
         }
         else if(id == R.id.signup){
             usernameSignupFileParse();
-            /*if(online()) {
-                signUp(fakeEmail,
-                        encryptor.encrypt(password.getText().toString(), androidId));
-            }*/
-
 
         }
     }

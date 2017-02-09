@@ -45,6 +45,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -75,9 +76,10 @@ public class WelcomeActivity extends Activity {
 
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private String androidId = android.os.Build.ID;
+    private String androidId = Build.ID;
     Encryptor encryptor;
     private DatabaseReference mDatabase;
+    int enrollment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +98,7 @@ public class WelcomeActivity extends Activity {
         points = settings.getInt("points", -1);
         artificial_level = settings.getInt("artificial_level", -1);
         level = settings.getInt("level", -1);
-
+        enrollment = settings.getInt("enrollment",-1);
         Button viewTermsButton = (Button) findViewById(R.id.viewTermsButton);
         //Button aboutButton = (Button) findViewById(R.id.aboutButton);
         Button playButton = (Button) findViewById(R.id.playButton);
@@ -109,13 +111,15 @@ public class WelcomeActivity extends Activity {
         System.out.println("points: " + points);
         System.out.println("artificial_level: " + artificial_level);
         System.out.println("level: " + level);
+        System.out.println("enrollmentStatus: " + enrollment);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                //user.getToken(true);
+
+
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
@@ -126,9 +130,18 @@ public class WelcomeActivity extends Activity {
                 // ...
             }
         };
-        String usernameEncrypted = encryptor.encrypt(username,androidId);
-        String fakeEmail = usernameEncrypted + "@gitdots.com";
-        signIn(fakeEmail,password);
+
+
+        if(enrollment == 1) {
+
+            String usernameEncrypted = encryptor.encrypt(username, androidId);
+            String fakeEmail = usernameEncrypted + "@gitdots.com";
+
+            signIn(fakeEmail, password);
+        }else{
+            if(mAuth.getCurrentUser() != null)
+                mAuth.signOut();
+        }
 
 
 
@@ -247,8 +260,10 @@ public class WelcomeActivity extends Activity {
         boolean fileExists = file.exists();
         if(fileExists)
             file.delete();*/
+        if(mAuth.getCurrentUser() != null)
+            mAuth.signOut();
         Intent intent = new Intent(this, LoginSignupActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }
@@ -568,7 +583,7 @@ public class WelcomeActivity extends Activity {
         }
         if(enrollment == 0){
             signUp(fakeEmail,passwordtxt);
-            saveEnrollment();
+
         }
         signIn(fakeEmail,passwordtxt);
 
@@ -583,6 +598,8 @@ public class WelcomeActivity extends Activity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("enrollment",1);
         editor.commit();
+        int enrollment = prefs.getInt("enrollment",-1);
+        System.out.println("saved enrollment status: " + enrollment);
         //Changed to allow for easy install/uninstall
         //File file = new File(Environment.getExternalStorageDirectory() + "/" + usernameFile);
         File file = new File(getExternalFilesDir(null), usernameFile);        //read in previous information(mostly for username/password)
@@ -619,7 +636,7 @@ public class WelcomeActivity extends Activity {
         try {
             FileOutputStream os = new FileOutputStream(file, true);
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(os);
-            Log.i("GameActivity", "file is in: " + file.getAbsolutePath());
+            Log.i("WelcomeActivity", "file is in: " + file.getAbsolutePath());
             for (int i = 0; i < LoginSignupActivity.ENROLL_INDEX; i++) {
                 outputStreamWriter.write(usernameFileData.get(i));
                 outputStreamWriter.write("\n");
@@ -629,7 +646,7 @@ public class WelcomeActivity extends Activity {
             LoginSignupActivity.usernameFileData.set(LoginSignupActivity.ENROLL_INDEX,"1");
         } catch (FileNotFoundException ex) {
         } catch (IOException e) {
-            Log.e("s", "File write failed: " + e.toString());
+            Log.e("WelcomeActivity", "File write failed: " + e.toString());
         }
     }
 
@@ -650,9 +667,10 @@ public class WelcomeActivity extends Activity {
         }
         else
         {
-            mAuth.signOut();
+            if(mAuth.getCurrentUser()!=null)
+                mAuth.signOut();
             Intent intent = new Intent(this, LoginSignupActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         }
@@ -676,13 +694,17 @@ public class WelcomeActivity extends Activity {
     public void signIn(String username, String password){
         Log.d(TAG, "signIn:" + username);
 
+        final Intent uploadData = new Intent(this,UploadDataService.class);
         mAuth.signInWithEmailAndPassword(username, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-
+                        if(task.isSuccessful()) {
+                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                            System.out.println("start upload service");
+                            startService(uploadData);
+                            //uploadLocalData();
+                        }
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -701,16 +723,24 @@ public class WelcomeActivity extends Activity {
     public void signUp(String username, String password) {
         Log.d(TAG, "signUp:" + username);
 
+        final Intent uploadData = new Intent(this,UploadDataService.class);
         mAuth.createUserWithEmailAndPassword(username, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
+                        System.out.println("executing createUserWithEmail");
+                        if(task.isSuccessful()) {
+                            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                            saveEnrollment();
+                            startService(uploadData);
+                            //uploadLocalData();
+                        }
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
+                            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                            Log.w(TAG, "createUserWithEmail", task.getException());
                             Toast.makeText(WelcomeActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
@@ -720,13 +750,33 @@ public class WelcomeActivity extends Activity {
                 });
     }
 
+
+
+    public boolean online(){
+        Context context = getApplicationContext();
+
+        final ConnectivityManager connectivityManager =
+                ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
+            System.out.println("network is connected");
+            return true;
+        } else {
+            //if(sharedPrefs.contains)
+            System.out.println("network is not connected");
+            return false;
+        }
+    }
+
     private void uploadLocalData(){
-        String filename = LoginSignupActivity.usernameFileData.get(0) + "data.txt";
-        File file = new File(getExternalFilesDir(null),filename);
+
+
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String username = prefs.getString("usernametxt", "default");
+        String filename =  username + "data.txt";
+        File file = new File(getExternalFilesDir(null),filename);
         Encryptor encryptor = new Encryptor();
-        String usernameE = encryptor.encrypt(username,android.os.Build.ID);
+        String usernameE = encryptor.encrypt(username,androidId);
         if(file.exists()) {
             System.err.println("userFile exists");
         }
@@ -736,17 +786,90 @@ public class WelcomeActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String information = null;
+        String lastUploadedDate = userDataStream.nextLine();
         String[] parsedData = null;
+        String information = null;
+        List<String> tempData= new ArrayList<>();
         while(userDataStream.hasNextLine()) {
             information = userDataStream.nextLine();
             parsedData = parseLocalData(information); //decide to move to upLoadService
+            tempData.add(information);
+            if(lastUploadedDate.equals(""))
+                break;
+            if(parsedData[0].equals(lastUploadedDate))
+                break;
+
         }
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("light").setValue(parsedData[1]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("current_Level").setValue(parsedData[2]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("trial_number").setValue(parsedData[3]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("frame_rate").setValue(parsedData[4]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("brightness").setValue(parsedData[5]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("placeholder").setValue(parsedData[6]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("placeholder2").setValue(parsedData[7]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("num_dots").setValue(parsedData[8]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("dot_size").setValue(parsedData[9]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("speed").setValue(parsedData[10]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("penalty_time").setValue(parsedData[11]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("coherence").setValue(parsedData[12]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("direction").setValue(parsedData[13]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("response").setValue(parsedData[14]);
+        mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("response_time").setValue(parsedData[15]);
+        lastUploadedDate = parsedData[0];
+        while (userDataStream.hasNextLine()){
+            information = userDataStream.nextLine();
+            parsedData = parseLocalData(information);
+            tempData.add(information);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("light").setValue(parsedData[1]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("current_Level").setValue(parsedData[2]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("trial_number").setValue(parsedData[3]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("frame_rate").setValue(parsedData[4]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("brightness").setValue(parsedData[5]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("placeholder").setValue(parsedData[6]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("placeholder2").setValue(parsedData[7]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("num_dots").setValue(parsedData[8]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("dot_size").setValue(parsedData[9]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("speed").setValue(parsedData[10]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("penalty_time").setValue(parsedData[11]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("coherence").setValue(parsedData[12]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("direction").setValue(parsedData[13]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("response").setValue(parsedData[14]);
+            mDatabase.child("data").child(usernameE).child(parsedData[16]).child(parsedData[0]).child("response_time").setValue(parsedData[15]);
+            lastUploadedDate = parsedData[0];
+        }
+
+        userDataStream.close();
+        file.delete();
+        file = new File(getExternalFilesDir(null),filename);
+
+
+        try {
+            FileOutputStream os = new FileOutputStream(file, true);
+            OutputStreamWriter dataStream = new OutputStreamWriter(os);
+            Log.i("Upload Data:", "file is in: " + file.getAbsolutePath());
+            dataStream.write(lastUploadedDate);
+            dataStream.write("\n");
+            for(int i=0;i<tempData.size();i++){
+                dataStream.write(tempData.get(i));
+                dataStream.write("\n");
+            }
+            dataStream.close();
+            os.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        mDatabase.child("users").child(usernameE).child("points").setValue(points);
+        mDatabase.child("users").child(usernameE).child("artLevel").setValue(artificial_level);
+        mDatabase.child("users").child(usernameE).child("level").setValue(level);
+
+
     }
 
     private String[] parseLocalData(String data){
         String[] result = data.split("\\t");
-        Intent dataIntent = new Intent();
         String date = result[0];
         float light = Float.parseFloat(result[1]);
         String currLevel = result[2];
@@ -764,42 +887,7 @@ public class WelcomeActivity extends Activity {
         int response = Integer.parseInt(result[14]);
         long responseTime = Long.parseLong(result[15]);
         String gameType = result[16];
-        dataIntent.putExtra("game_type",gameType);
-        dataIntent.putExtra("points", points);
-        dataIntent.putExtra("artificial_level", artificial_level);
-        dataIntent.putExtra("level", currLevel);
-        dataIntent.putExtra("date",date);
-        dataIntent.putExtra("light",light);
-        dataIntent.putExtra("currLevel",currLevel.toString());
-        dataIntent.putExtra("trial_number",trialNumber);
-        dataIntent.putExtra("framerate",60);
-        dataIntent.putExtra("brightness",brightness);
-        dataIntent.putExtra("placeholder",1);
-        dataIntent.putExtra("placeholder2",0);
-        dataIntent.putExtra("dot_size",35);
-        dataIntent.putExtra("speed",speed);
-        dataIntent.putExtra("penalty_time",penaltyTime);
-        dataIntent.putExtra("coherence",coherence);
-        dataIntent.putExtra("direction",direction);
-        dataIntent.putExtra("response",response);
-        dataIntent.putExtra("response_time",responseTime);
         return result;
-    }
-
-    public boolean online(){
-        Context context = getApplicationContext();
-
-        final ConnectivityManager connectivityManager =
-                ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
-        NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if (currentNetworkInfo != null && currentNetworkInfo.isConnected()) {
-            System.out.println("network is connected");
-            return true;
-        } else {
-            //if(sharedPrefs.contains)
-            System.out.println("network is not connected");
-            return false;
-        }
     }
 }
 

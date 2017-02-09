@@ -67,7 +67,7 @@ public class SaveDataService extends IntentService {
         String username = prefs.getString("usernametxt", "default");
         Encryptor encryptor = new Encryptor();
         String usernameE = encryptor.encrypt(username,android.os.Build.ID);
-
+        int enrollment = prefs.getInt("enrollment",-1);
         //Changed to allow for easy install/uninstall
         //File file = new File(Environment.getExternalStorageDirectory() + "/" + usernameFile);
         File file = new File(getExternalFilesDir(null), usernameFile);        //read in previous information(mostly for username/password)
@@ -120,6 +120,7 @@ public class SaveDataService extends IntentService {
             outputStreamWriter.write("\n");
             outputStreamWriter.write(usernameFileData.get(LoginSignupActivity.ENROLL_INDEX));
             outputStreamWriter.close();
+            os.close();
         } catch (FileNotFoundException ex) {
         } catch (IOException e) {
             Log.e("s", "File write failed: " + e.toString());
@@ -129,7 +130,8 @@ public class SaveDataService extends IntentService {
         final ConnectivityManager connectivityManager =
                 ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         NetworkInfo currentNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if (currentNetworkInfo != null && currentNetworkInfo.isConnected() && mDatabase != null) {
+        if (currentNetworkInfo != null && currentNetworkInfo.isConnected() && mDatabase != null
+                && enrollment == 1) {
             mDatabase.child("users").child(usernameE).child("device_id").setValue(android.os.Build.MODEL);
             //String data = innerIntent.getStringExtra("data");
             //mDatabase.child("users").child(usernameE).child("data").setValue(data);
@@ -140,7 +142,7 @@ public class SaveDataService extends IntentService {
             float light = innerIntent.getFloatExtra("light",0);
             String currLevel = innerIntent.getStringExtra("currLevel");;
             int trialNumber = innerIntent.getIntExtra("trial_number",0);
-            double framerate = innerIntent.getDoubleExtra("framerate",60);
+            int framerate = innerIntent.getIntExtra("framerate",60);
             double brightness = innerIntent.getDoubleExtra("brightness",0);
             int placeholder = innerIntent.getIntExtra("placeholder",1);
             int placeholder2 = innerIntent.getIntExtra("placeholder2",0);
@@ -176,33 +178,7 @@ public class SaveDataService extends IntentService {
             mDatabase.child("users").child(usernameE).child("points").setValue(points);
             mDatabase.child("users").child(usernameE).child("artLevel").setValue(artificial_level);
             mDatabase.child("users").child(usernameE).child("level").setValue(level);
-                            /*ParseQuery<ParseObject> query = ParseQuery.getQuery("TrialData");
-                            query.whereEqualTo("user", ParseUser.getCurrentUser());
-                            query.whereEqualTo("device_id", android.os.Build.MODEL);
-                            ParseObject p = new ParseObject("TrialData");
-                            try {
-                                p = query.getFirst();
-                                if (p == null) {
-                                    p = new ParseObject("TrialData");
-                                    p.put("user", ParseUser.getCurrentUser());
-                                    p.put("device_id", android.os.Build.MODEL);
-                                }
-                            } catch (ParseException ex) {
-                            }*/
-
-
-
-                            /*p.put("points", points);
-                            p.put("artificial_level", artificial_level);
-                            p.put("dataFile", dataFile);
-                            p.put("user", ParseUser.getCurrentUser());
-                            p.put("device_id", android.os.Build.MODEL);
-                            p.put("level", level);
-                            //p.saveInBackground();
-                            //p.saveEventually(new );
-                            p.pinInBackground();
-                            p.saveInBackground();*/
-                        }
+        }
 
 
          else {

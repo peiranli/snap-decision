@@ -13,7 +13,7 @@ public class Encryptor {
 		int encryptedInt;
 		StringBuffer text = new StringBuffer();
 		text.append(plainText);
-		text.append(android_id);
+
 		for (int i = 0; i < text.length(); i++) {
 			int plainTextInt = (int) (text.charAt(i) - 'A');
 			int secretKeyInt = (int)
@@ -21,6 +21,7 @@ public class Encryptor {
 			encryptedInt = (plainTextInt + secretKeyInt) % 26;
 			encryptedString.append((char) ((encryptedInt) + (int) 'A'));
 		}
+		encryptedString.append(android_id);
 		return encryptedString.toString();
 	}
 

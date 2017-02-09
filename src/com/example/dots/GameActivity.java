@@ -259,24 +259,47 @@ public class GameActivity extends Activity implements SensorEventListener
                 +currLevel.getBrightness()+
                 "\t"+1+"\t"+0+"\t"+currLevel.getNumDots()+"\t"+35+"\t"+currLevel.getSpeed()+"\t"+
                 currLevel.getPenaltyTime()+"\t"+currLevel.getCoherence()+"\t"+direction+"\t"+
-                response+"\t"+responseTime+"\n";
+                response+"\t"+responseTime+"\t"+"practice"+"\n";
         //File file = new File(Environment.getExternalStorageDirectory()+"/"+fileName);
-        File file = new File(getExternalFilesDir(null),LoginSignupActivity.usernameFileData.get(0) + "data.txt");
+        SharedPreferences prefs = getSharedPreferences(LoginSignupActivity.PREFS_NAME, MODE_PRIVATE);
+        String username = prefs.getString("usernametxt", "default");
+        String filename = username + "data.txt";
+        File file = new File(getExternalFilesDir(null),filename);
         boolean fileExists = file.exists();
-        if(fileExists)
+        if(fileExists) {
             System.out.println("The file exists");
-        try {
-            FileOutputStream os = new FileOutputStream(file, true);
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(os);
-            Log.i("GameActivity", "file is in: " + file.getAbsolutePath());
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
+            try {
+                FileOutputStream os = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(os);
+                Log.i("GameActivity", "file is in: " + file.getAbsolutePath());
+                outputStreamWriter.write(data);
+                outputStreamWriter.close();
+            }
+            catch(FileNotFoundException ex) {
+                System.err. println("Data.txt doesn't exist");
+            }
+            catch (IOException e) {Log.e("s", "File write failed: " + e.toString());
+            }
+
+
+        }else{
+            //new file including header
+            try {
+                FileOutputStream os = new FileOutputStream(file, true);
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(os);
+                Log.i("GameActivity", "file is in: " + file.getAbsolutePath());
+                outputStreamWriter.write("");
+                outputStreamWriter.write("\n");
+                outputStreamWriter.write(data);
+                outputStreamWriter.close();
+            }
+            catch(FileNotFoundException ex) {
+                System.err. println("Data.txt doesn't exist");
+            }
+            catch (IOException e) {Log.e("s", "File write failed: " + e.toString());
+            }
         }
-        catch(FileNotFoundException ex) {
-            System.err. println("Data.txt doesn't exist");
-        }
-        catch (IOException e) {Log.e("s", "File write failed: " + e.toString());
-        }
+
 
 
 
@@ -285,34 +308,32 @@ public class GameActivity extends Activity implements SensorEventListener
 
     private void saveGameData(){
         Intent saveData = null;
-        String enrollment = LoginSignupActivity.usernameFileData.get(LoginSignupActivity.ENROLL_INDEX);
-        int en = Integer.parseInt(enrollment);
-        if(online()&& en == 1)
+        int enrollment = settings.getInt("enrollment",-1);
+        if(online()&& enrollment == 1) {
             saveData = new Intent(this, SaveDataService.class);
-        else
-            saveData = new Intent(this, OfflineSaveDataService.class);
-        //saveData.putExtra("data", data);
-        saveData.putExtra("game_type","practice");
-        saveData.putExtra("points", points);
-        saveData.putExtra("artificial_level", artificial_level);
-        saveData.putExtra("level", currLevel.getLevel());
-        saveData.putExtra("date",date);
-        saveData.putExtra("light",light);
-        saveData.putExtra("currLevel",currLevel.toString());
-        saveData.putExtra("trial_number",currLevel.getTrialNumber());
-        saveData.putExtra("framerate",60);
-        saveData.putExtra("brightness",currLevel.getBrightness());
-        saveData.putExtra("placeholder",1);
-        saveData.putExtra("placeholder2",0);
-        saveData.putExtra("numDots",currLevel.getNumDots());
-        saveData.putExtra("dot_size",35);
-        saveData.putExtra("speed",currLevel.getSpeed());
-        saveData.putExtra("penalty_time",currLevel.getPenaltyTime());
-        saveData.putExtra("coherence",currLevel.getCoherence());
-        saveData.putExtra("direction",direction);
-        saveData.putExtra("response",response);
-        saveData.putExtra("response_time",responseTime);
-        startService(saveData);
+            //saveData.putExtra("data", data);
+            saveData.putExtra("game_type", "practice");
+            saveData.putExtra("points", points);
+            saveData.putExtra("artificial_level", artificial_level);
+            saveData.putExtra("level", currLevel.getLevel());
+            saveData.putExtra("date", date);
+            saveData.putExtra("light", light);
+            saveData.putExtra("currLevel", currLevel.toString());
+            saveData.putExtra("trial_number", currLevel.getTrialNumber());
+            saveData.putExtra("framerate", 60);
+            saveData.putExtra("brightness", currLevel.getBrightness());
+            saveData.putExtra("placeholder", 1);
+            saveData.putExtra("placeholder2", 0);
+            saveData.putExtra("numDots", currLevel.getNumDots());
+            saveData.putExtra("dot_size", 35);
+            saveData.putExtra("speed", currLevel.getSpeed());
+            saveData.putExtra("penalty_time", currLevel.getPenaltyTime());
+            saveData.putExtra("coherence", currLevel.getCoherence());
+            saveData.putExtra("direction", direction);
+            saveData.putExtra("response", response);
+            saveData.putExtra("response_time", responseTime);
+            startService(saveData);
+        }
     }
 
     public void clickLeft(View v)
