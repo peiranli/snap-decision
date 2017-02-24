@@ -67,6 +67,8 @@ public class UploadDataService extends IntentService{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(userDataStream == null)
+            return;
         String lastUploadedDate = userDataStream.nextLine();
         String[] parsedData = null;
         String information = null;
