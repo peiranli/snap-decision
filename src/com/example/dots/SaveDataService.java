@@ -39,7 +39,7 @@ import java.util.Scanner;
 public class SaveDataService extends IntentService {
     ArrayList<String> usernameFileData = new ArrayList<String>();
     int userPoints; // New point value to be updated
-    int userArtLevel; //artificial level of the user
+    //int userArtLevel; //artificial level of the user
     int userLevel; //actual level of the user
     public static final int POINTS_INDEX = 4;
     public static final int ART_LEVEL_INDEX = 5;
@@ -60,7 +60,7 @@ public class SaveDataService extends IntentService {
         // getting user data
         final Intent innerIntent = intent;
         userPoints = intent.getIntExtra("points", -1);
-        userArtLevel = intent.getIntExtra("artificial_level", -1);
+        //userArtLevel = intent.getIntExtra("artificial_level", -1);
         userLevel = intent.getIntExtra("level", -1);
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String usernameFile = prefs.getString("usernametxt", "default") + ".txt";
@@ -95,7 +95,7 @@ public class SaveDataService extends IntentService {
             }
         }
         usernameFileData.set(POINTS_INDEX, Integer.toString(userPoints));
-        usernameFileData.set(ART_LEVEL_INDEX, Integer.toString(userArtLevel));
+        //usernameFileData.set(ART_LEVEL_INDEX, Integer.toString(userArtLevel));
         usernameFileData.set(LEVEL_INDEX, Integer.toString(userLevel));
         file.delete();
         //file = new File(Environment.getExternalStorageDirectory() + "/" + usernameFile);
@@ -112,8 +112,8 @@ public class SaveDataService extends IntentService {
 
             outputStreamWriter.write(Integer.toString(userPoints)); //toString to comply with previous formatting
             outputStreamWriter.write("\n");
-            outputStreamWriter.write(Integer.toString(userArtLevel));
-            outputStreamWriter.write("\n");
+            //outputStreamWriter.write(Integer.toString(userArtLevel));
+            //outputStreamWriter.write("\n");
             outputStreamWriter.write(Integer.toString(userLevel));
             outputStreamWriter.write("\n");
             outputStreamWriter.write(usernameFileData.get(LoginSignupActivity.ELIGIBLE_INDEX));
@@ -173,10 +173,10 @@ public class SaveDataService extends IntentService {
             mDatabase.child("data").child(usernameE).child(gameType).child(date).child("response_time").setValue(responseTime);
             System.out.println("save data");
             int points = innerIntent.getIntExtra("points", -1);
-            int artificial_level = innerIntent.getIntExtra("artificial_level", -1);
+            //int artificial_level = innerIntent.getIntExtra("artificial_level", -1);
             int level = innerIntent.getIntExtra("level", -1);
             mDatabase.child("users").child(usernameE).child("points").setValue(points);
-            mDatabase.child("users").child(usernameE).child("artLevel").setValue(artificial_level);
+            //mDatabase.child("users").child(usernameE).child("artLevel").setValue(artificial_level);
             mDatabase.child("users").child(usernameE).child("level").setValue(level);
         }
 

@@ -63,8 +63,7 @@ public class LimitsGameActivity extends Activity implements SensorEventListener 
     private static long startTime, endTime;
     public static Dot[] dirDotArray, randDotArray;
     public static boolean newTrial = true;
-    private static int artificial_level = 1, points = 0, step = 50;
-    private static ParseUser user;
+    private static int level =1, points = 0, step = 50;
     private static NumberProgressBar progressBar;
     private static SharedPreferences settings;
     private TextView mTextField;
@@ -85,7 +84,7 @@ public class LimitsGameActivity extends Activity implements SensorEventListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         points = 0;
-        user = ParseUser.getCurrentUser();
+
         settings = getSharedPreferences(LoginSignupActivity.PREFS_NAME, 0);
 
         // int userLevel = getIntent().getIntExtra("level", 1);
@@ -276,7 +275,7 @@ public class LimitsGameActivity extends Activity implements SensorEventListener 
             //saveData.putExtra("data", data);
             saveData.putExtra("game_type", "test limit");
             saveData.putExtra("points", points);
-            saveData.putExtra("artificial_level", artificial_level);
+            //saveData.putExtra("artificial_level", artificial_level);
             saveData.putExtra("level", currLevel.getLevel());
             saveData.putExtra("date", date);
             saveData.putExtra("light", light);
@@ -343,7 +342,7 @@ public class LimitsGameActivity extends Activity implements SensorEventListener 
                 currLevel.addTrial(1);
                 correct = true;
                 points++;
-                info.setText("Points:     " + points + "/" + step + " Level:   " + artificial_level);
+                info.setText("Points:     " + points + "/" + step + " Level:   " + level);
                 progressBar.setProgress((int) (((double) points / step) * 100));
             } else {
                 currLevel.addTrial(0);
@@ -357,7 +356,7 @@ public class LimitsGameActivity extends Activity implements SensorEventListener 
                 currLevel.addTrial(1);
                 correct = true;
                 points++;
-                info.setText("Points:     " + points + "/" + step + " Level:   " + artificial_level);
+                info.setText("Points:     " + points + "/" + step + " Level:   " + level);
                 progressBar.setProgress((int) (((double) points / step) * 100));
             } else {
                 currLevel.addTrial(0);
@@ -378,15 +377,15 @@ public class LimitsGameActivity extends Activity implements SensorEventListener 
             //playGradMessageSound();
             progressBar.setProgress(0);
             points = 0;
-            artificial_level++;
-            info.setText("Points:   " + points + "/" + step + " Level:    " + artificial_level);
+            //artificial_level++;
+            info.setText("Points:   " + points + "/" + step + " Level:    " + level);
             //initNextStep(); //change this to better name later, like nextStep()
         }
         SharedPreferences settings = getSharedPreferences(LoginSignupActivity.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt("points", points
         );
-        editor.putInt("artificial_level", artificial_level);
+
         editor.putInt("level", currLevel.getLevel());
         // Commit the edits!
         //editor.commit();

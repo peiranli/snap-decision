@@ -91,7 +91,7 @@ public class GameActivity extends Activity implements SensorEventListener
     private static long startTime, endTime;
     public static Dot[] dirDotArray, randDotArray;
     public static boolean newTrial = true;
-    private static int artificial_level = 1, points= 0, level = 1, step = 50;
+    private static int points= 0, level = 1, step = 50;
     private static NumberProgressBar progressBar;
     private static SharedPreferences settings;
     private static Level[] levels = {
@@ -234,11 +234,11 @@ public class GameActivity extends Activity implements SensorEventListener
 
 
         points = settings.getInt("points", -1);
-        artificial_level = settings.getInt("artificial_level", -1);
+        //artificial_level = settings.getInt("artificial_level", -1);
         level = settings.getInt("level", -1);
 
         progressBar.setProgress((int)(((double)points/step)*100));
-        info.setText("Points:   "+ points + "/"+step+" Level:     "+ artificial_level);
+        info.setText("Points:   "+ points + "/"+step+" Level:     "+ level);
 
 
         //System.out.println("points; "+user.getInt("points") + " artificial_level: " +  user.getInt("artificial_level"));
@@ -314,7 +314,7 @@ public class GameActivity extends Activity implements SensorEventListener
             //saveData.putExtra("data", data);
             saveData.putExtra("game_type", "practice");
             saveData.putExtra("points", points);
-            saveData.putExtra("artificial_level", artificial_level);
+            saveData.putExtra("artificial_level", level);
             saveData.putExtra("level", currLevel.getLevel());
             saveData.putExtra("date", date);
             saveData.putExtra("light", light);
@@ -382,7 +382,7 @@ public class GameActivity extends Activity implements SensorEventListener
                 currLevel.addTrial(1);
                 correct = true;
                 points++;
-                info.setText("Points:     " + points + "/"+step+" Level:   " + artificial_level);
+                info.setText("Points:     " + points + "/"+step+" Level:   " + level);
                 progressBar.setProgress((int)(((double)points/step)*100));
             } else {
                 currLevel.addTrial(0);
@@ -396,7 +396,7 @@ public class GameActivity extends Activity implements SensorEventListener
                 currLevel.addTrial(1);
                 correct = true;
                 points++;
-                info.setText("Points:     " + points + "/"+step+" Level:   " + artificial_level);
+                info.setText("Points:     " + points + "/"+step+" Level:   " + level);
                 progressBar.setProgress((int)(((double)points/step)*100));
             } else {
                 currLevel.addTrial(0);
@@ -421,14 +421,13 @@ public class GameActivity extends Activity implements SensorEventListener
                 playGradMessageSound();
                 progressBar.setProgress(0);
                 points = 0;
-                artificial_level++;
-                info.setText("Points:   "+ points + "/"+step+" Level:    "+ artificial_level);
+
+                info.setText("Points:   "+ points + "/"+step+" Level:    "+ level);
                 //initNextStep(); //change this to better name later, like nextStep()
             }
         SharedPreferences settings = getSharedPreferences(LoginSignupActivity.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt("points", points);
-        editor.putInt("artificial_level", artificial_level);
         editor.putInt("level", currLevel.getLevel());
         // Commit the edits!
         editor.commit();

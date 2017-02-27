@@ -27,7 +27,7 @@ public class UploadDataService extends IntentService{
         public static final String PREFS_NAME = "Dots_Pref";
         private DatabaseReference mDatabase;
         int points = -1;
-        int artificial_level = -1;
+        //int artificial_level = -1;
         int level = -1;
 
     /**
@@ -42,7 +42,7 @@ public class UploadDataService extends IntentService{
             mDatabase = FirebaseDatabase.getInstance().getReference();
             SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             points = prefs.getInt("points", -1);
-            artificial_level = prefs.getInt("artificial_level", -1);
+            //artificial_level = prefs.getInt("artificial_level", -1);
             level = prefs.getInt("level", -1);
             System.out.println("uploading offline data");
             uploadLocalData();
@@ -145,7 +145,7 @@ public class UploadDataService extends IntentService{
         }
 
         mDatabase.child("users").child(usernameE).child("points").setValue(points);
-        mDatabase.child("users").child(usernameE).child("artLevel").setValue(artificial_level);
+        //mDatabase.child("users").child(usernameE).child("artLevel").setValue(artificial_level);
         mDatabase.child("users").child(usernameE).child("level").setValue(level);
 
 

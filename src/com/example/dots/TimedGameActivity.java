@@ -84,8 +84,7 @@ public class TimedGameActivity extends Activity implements SensorEventListener {
     private static long startTime, endTime;
     public static Dot[] dirDotArray, randDotArray;
     public static boolean newTrial = true;
-    private static int artificial_level = 1, points = 0, step = 50;
-    private static ParseUser user;
+    private static int level = 1, points = 0, step = 50;
     private static NumberProgressBar progressBar;
     private static SharedPreferences settings;
     private TextView mTextField;
@@ -106,7 +105,6 @@ public class TimedGameActivity extends Activity implements SensorEventListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         trialsCorrect = 0;
-        //user = ParseUser.getCurrentUser();
         settings = getSharedPreferences(LoginSignupActivity.PREFS_NAME, 0);
 
         // int userLevel = getIntent().getIntExtra("level", 1);
@@ -330,7 +328,7 @@ public class TimedGameActivity extends Activity implements SensorEventListener {
             //saveData.putExtra("data", data);
             saveData.putExtra("game_type", "test speed");
             saveData.putExtra("points", points);
-            saveData.putExtra("artificial_level", artificial_level);
+            //saveData.putExtra("artificial_level", artificial_level);
             saveData.putExtra("level", currLevel.getLevel());
             saveData.putExtra("date", date);
             saveData.putExtra("light", light);
@@ -445,7 +443,6 @@ public class TimedGameActivity extends Activity implements SensorEventListener {
             //playGradMessageSound();
             progressBar.setProgress(0);
             points = 0;
-            artificial_level++;
             //info.setText("Points:   " + points + "/" + step + " Level:    " + artificial_level);
             info.setText("Score: " + trialsCorrect);
             //initNextStep(); //change this to better name later, like nextStep()
@@ -454,7 +451,7 @@ public class TimedGameActivity extends Activity implements SensorEventListener {
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt("points", points
         );
-        editor.putInt("artificial_level", artificial_level);
+        editor.putInt("artificial_level", level);
         editor.putInt("level", currLevel.getLevel());
         // Commit the edits!
         //editor.commit();
